@@ -6,6 +6,8 @@ import { UsersModule } from './modules/user/user.module';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './modules/role/roles.guard';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 
 @Module({
   imports: [
@@ -14,6 +16,15 @@ import { RolesGuard } from './modules/role/roles.guard';
       isGlobal: true,
     }),
     UsersModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      autoLoadEntities: true,
+      synchronize: false,
+      ssl: {
+        rejectUnauthorized: false, // obrigatório para Supabase
+      },
+    }),
   ],
   controllers: [UserController],
   providers: [
