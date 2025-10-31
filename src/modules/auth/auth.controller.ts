@@ -10,7 +10,7 @@ export class AuthController {
   constructor(private authService: AuthService) { }
 
   @HttpCode(HttpStatus.OK)
-  @Post('singin')
+  @Post('signin')
   @Public()
   signIn(@Body() signInDto: Record<string, any>) {
     return this.authService.signIn(signInDto.username, signInDto.password);
