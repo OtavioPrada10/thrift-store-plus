@@ -17,38 +17,30 @@ export class UsersService {
   async create(data: Partial<User>): Promise<User> {
     const user = this.userRepository.create(data);
     if (user.password) {
-    user.password = await this.authService.hashPassword(user.password);
-  }
+      user.password = await this.authService.hashPassword(user.password);
+    }
     return await this.userRepository.save(user)
   }
-  async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async findAll() {
+    const users = await this.userRepository.find();
+    return this.removePasswordFromMany(users);
   }
 
-  async findOneById(id: number): Promise<User | null> {
-    return this.userRepository.findOne({where: {id: id}});
-  }
+  async findOneById(id: number) {
+  const user = await this.userRepository.findOne({ where: { id } });
+  return user ? this.removePassword(user) : null;
+}
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: '$2b$10$8mPWK6WTE65dRNh2H6f8y.HwJxAoOazvPPWSE6cYjCirOX6c8Gs6O', // hashed 'changeme'
-      roles: Role.Admin,
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-      roles: Role.Admin,
-    },
-  ];
+  private removePassword(user: User): Omit<User, 'password'> {
+    const { password, ...rest } = user;
+    return rest;
+  }
 
-  // async findOne(username: string): Promise<User | null> {
-  //   return this.users.find(user => user.username === username);
-  // }
+  private removePasswordFromMany(users: User[]): Omit<User, 'password'>[] {
+    return users.map(({ password, ...rest }) => rest);
+  }
 }
