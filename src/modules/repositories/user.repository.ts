@@ -1,4 +1,4 @@
-import { CreateUserDto } from "../user/dto/create-user.dto";
+import { CreateUserDto } from "../user/dto/user.dto";
 export class UserRepository {
     private users: CreateUserDto[] = []
 

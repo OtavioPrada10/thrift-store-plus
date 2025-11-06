@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
 // import { UserRepository } from "src/modules/repositories/user.repository";
 import { Roles } from "../role/decorators/roles.decorator";
 import { Role } from "../role/enums/role.enum";
 import { User } from "./entity/user.entity";
 import { UsersService } from "./user.service";
 import { Public } from "../auth/decorators/public.decorator";
+import { UpdateUserDto } from "./dto/user.dto";
 
 
 
@@ -26,5 +27,10 @@ export class UserController {
     @Get('/:id')
     findOne(@Param('id') id: number) {
         return this.usersService.findOneById(id);
+    }
+
+    @Patch('/:id')
+    update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.update(id, updateUserDto);
     }
 }

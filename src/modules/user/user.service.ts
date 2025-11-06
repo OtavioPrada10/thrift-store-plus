@@ -1,10 +1,11 @@
 
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Role } from '../role/enums/role.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { AuthService } from '../auth/auth.service';
+import { UpdateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,12 +28,33 @@ export class UsersService {
   }
 
   async findOneById(id: number) {
-  const user = await this.userRepository.findOne({ where: { id } });
-  return user ? this.removePassword(user) : null;
-}
+    const user = await this.userRepository.findOne({ where: { id } });
+    return user ? this.removePassword(user) : null;
+  }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { email } });
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOne({ where: { id } })
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.authService.hashPassword(updateUserDto.password)
+    }
+    const toSave = this.userRepository.merge(user, updateUserDto)
+
+    try {
+      const saved = await this.userRepository.save(toSave);
+      return this.removePassword(saved);
+    } catch (e: any) {
+      // opcional: tratar violação de unique (ex: email duplicado)
+      if (e?.code === '23505') { // Postgres unique_violation
+        throw new ConflictException('Valor já em uso (provável email duplicado).');
+      }
+      throw e;
+    }
   }
 
   private removePassword(user: User): Omit<User, 'password'> {
