@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 // import { UserRepository } from "src/modules/repositories/user.repository";
 import { Roles } from "../role/decorators/roles.decorator";
 import { Role } from "../role/enums/role.enum";
@@ -32,5 +32,10 @@ export class UserController {
     @Patch('/:id')
     update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.update(id, updateUserDto);
+    }
+
+    @Delete('/:ID')
+    delete(@Param('id') id: number) {
+        return this.usersService.delete(id);
     }
 }

@@ -57,6 +57,13 @@ export class UsersService {
     }
   }
 
+  async delete(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    await this.userRepository.remove(user);
+    return { message: 'User deleted successfully' };
+  }
+
   private removePassword(user: User): Omit<User, 'password'> {
     const { password, ...rest } = user;
     return rest;
