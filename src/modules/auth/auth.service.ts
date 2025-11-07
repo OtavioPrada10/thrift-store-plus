@@ -17,16 +17,11 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ access_token: string, email: string, roles: string, id: number, name: string }> {
-    // const hash = await this.hashPassword(password);
     const user = await this.usersService.findByEmail(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const passwordMatches = await this.comparePassword(password, user.password);
     if (!passwordMatches) throw new UnauthorizedException('Invalid credentials');
-    // if (user?.password !== hash) {
-    //   throw new UnauthorizedException();
-    // }
     const payload = { id: user.id, name: user.name, email: user.email, roles: user.role };
-    console.log(user);
     return {
       id: user.id,
       access_token: await this.jwtService.signAsync(payload),

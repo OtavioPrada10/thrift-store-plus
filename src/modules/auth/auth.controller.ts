@@ -4,6 +4,7 @@ import { AuthGuard } from './auth.guard';
 import { Public } from './decorators/public.decorator';
 import { Roles } from '../role/decorators/roles.decorator';
 import { Role } from '../role/enums/role.enum';
+import { SignInDto } from './dto/signIn.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,22 +13,14 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('signin')
   @Public()
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  signIn(@Body() signInDto: SignInDto ) {
+    return this.authService.signIn(signInDto.email, signInDto.password);
   }
-
-  // @HttpCode(HttpStatus.OK)
-  // @Post('register')
-  // @Public()
-  // register(@Body() registerDto: Record<string, any>) {
-  //   return this.authService.register(registerDto);
-  // }
 
   @UseGuards(AuthGuard)
   @Get('profile')
   @Roles(Role.Admin)
   getProfile(@Request() req) {
-    console.log(req.user);
     return req.user;
   }
 }
