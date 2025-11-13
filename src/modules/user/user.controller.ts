@@ -36,7 +36,6 @@ export class UserController {
 
     @Delete('/:id')
     delete(@Param('id') id: number) {
-        console.log(id)
         return this.usersService.delete(id);
     }
 }
