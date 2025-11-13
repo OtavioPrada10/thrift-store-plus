@@ -34,8 +34,9 @@ export class UserController {
         return this.usersService.update(id, updateUserDto);
     }
 
-    @Delete('/:ID')
+    @Delete('/:id')
     delete(@Param('id') id: number) {
+        console.log(id)
         return this.usersService.delete(id);
     }
 }
