@@ -7,6 +7,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './modules/role/roles.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AddressModule } from './modules/address/address.module';
 
 
 @Module({
@@ -16,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       isGlobal: true,
     }),
     UsersModule,
+    AddressModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
