@@ -11,7 +11,7 @@ export class AddressService {
     private addressRepository: Repository<Address>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) { }
   async create(addressDto: CreateAddressDto) {
     const user = await this.userRepository.findOne({
       where: { id: addressDto.userId },
@@ -33,8 +33,15 @@ export class AddressService {
     return await this.addressRepository.save(address);
   }
 
-  findAll() {
-    return this.addressRepository.find();
+  findAll(id: number) {
+    return this.addressRepository.find({
+      where: {
+        user: {
+          id: id,
+        },
+      },
+      relations: ['user'],
+    });
   }
 
   async update(id: number, updateAddressDto: UpdateAddressDto) {
@@ -51,5 +58,6 @@ export class AddressService {
     if (!address) throw new NotFoundException('Address não encontrado');
 
     await this.addressRepository.remove(address);
+    return { message: 'User deleted successfully' };
   }
 }

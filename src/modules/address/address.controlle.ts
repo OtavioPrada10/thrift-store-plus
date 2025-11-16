@@ -10,9 +10,9 @@ export class AddressController {
     return this.addressService.create(addressDto)
   }
 
-  @Get()
-  findAll() {
-    return this.addressService.findAll();
+  @Get('/user/:id')
+  findAll(@Param('id') id: number) {
+    return this.addressService.findAll(id);
   }
 
   @Patch('/:id')
